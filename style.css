@@ -1,0 +1,116 @@
+body {
+  font-family: 'Helvetica', Arial, sans-serif;
+}
+.tab-btn {
+  padding: 10px 18px;
+  margin-right: 6px;
+  border-radius: 4px 4px 0 0;
+  border: none;
+  background: #eee;
+  color: #222;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.tab-btn.active {
+  background: #0c3866;
+  color: #fff;
+}
+.tab-content {
+  display: none;
+  border-radius: 0 0 8px 8px;
+  background: #fff;
+  padding: 18px 0;
+}
+.tab-content.active {
+  display: block;
+}
+.boton {
+  background: #0c3866;
+  color: #fff;
+  border: none;
+  padding: 10px 28px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 10px 0;
+  font-weight: 600;
+}
+.stats-grid {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: stretch;
+  margin-bottom: 10px;
+}
+.stat-box {
+  background: #fafbfc;
+  border-radius: 10px;
+  padding: 15px 25px;
+  min-width: 140px;
+  text-align: center;
+  box-shadow: 0 1px 2px #ccc;
+}
+.stat-asignados { background: #e3fbe5; }
+.stat-noasignados { background: #ffeaea; }
+.stat-total { background: #e6eefd; }
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 15px;
+}
+th, td {
+  border: 1px solid #bbb;
+  padding: 8px 5px;
+  text-align: center;
+}
+th {
+  background: #0c3866;
+  color: #fff;
+}
+.header {
+  background: #0c3866;
+  color: #fff;
+  padding: 28px 0 14px 0;
+  text-align: center;
+}
+.container {
+  max-width: 1100px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px #b6b6b6;
+  padding: 30px 36px;
+}
+.form-row { margin-bottom: 14px; }
+.boton-descargar {
+  background: #d32f2f !important;
+  color: #fff !important;
+  padding: 7px 14px !important;
+  border-radius: 4px !important;
+  font-size: 0.98rem !important;
+  font-weight: 600 !important;
+  border: none !important;
+  text-decoration: none !important;
+  margin-left: 18px;
+  transition: background 0.2s;
+  display: inline-block;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  line-height: 1;
+}
+.boton-descargar:hover {
+  background: #b71c1c !important;
+}
+.prof-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 32px;
+  margin-bottom: 0;
+}
+.prof-row h3 {
+  margin: 0;
+  font-size: 1.17em;
+  font-weight: 700;
+  color: #0c3866;
+  letter-spacing: 0.3px;
+}

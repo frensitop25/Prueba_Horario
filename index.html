@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Asignación Inteligente de Horarios</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header class="header">
+    <h1>Asignación Inteligente de Horarios</h1>
+  </header>
+  <main class="container">
+    <h2 style="margin-top: 0;">Cargar archivo de horarios</h2>
+    {% if error %}
+      <div style="background:#ffeaea;color:#900;padding:12px;margin-bottom:16px;border-radius:7px;">
+        {{ error }}
+      </div>
+    {% endif %}
+    <form method="POST" enctype="multipart/form-data">
+      <div class="form-row">
+        <label for="archivo">Subir archivo de grupos (.xlsx)</label>
+        <input type="file" id="archivo" name="archivo" accept=".xlsx" required />
+      </div>
+      <div class="form-row">
+        <label for="codigo">Ingrese el Código de asignatura</label>
+        <input type="text" id="codigo" name="codigo" placeholder="Ej. 0741" required />
+      </div>
+      <button type="submit" class="boton">Subir y Generar</button>
+    </form>
+
+    {% if estadisticas and estadisticas.total is not none %}
+      <section style="margin-top: 30px;">
+        <h3 class="stats-title">Estadísticas de asignación para {{ estadisticas.nombre_asig }}</h3>
+        <div class="stats-grid">
+          <div class="stat-box stat-total">
+            <strong>Total de grupos:</strong>
+            <p id="totalGrupos">{{ estadisticas.total }}</p>
+          </div>
+          <div class="stat-box stat-asignados">
+            <strong>Asignados grupo de a 3:</strong>
+            <p>{{ estadisticas.asignados_3 }}</p>
+          </div>
+          <div class="stat-box stat-asignados">
+            <strong>Asignados grupo de a 2:</strong>
+            <p>{{ estadisticas.asignados_2 }}</p>
+          </div>
+          <div class="stat-box stat-noasignados">
+            <strong>No asignados:</strong>
+            <p>{{ estadisticas.no_asignados }}</p>
+          </div>
+        </div>
+      </section>
+    {% endif %}
+
+    {% if estadisticas and estadisticas.total > 0 %}
+      <section style="margin-top: 28px;">
+        <!-- Botón PDF global -->
+        <button class='boton' style='margin-bottom:18px;margin-right:14px;'
+          onclick='window.open("{{ url_for("descargar_todos_asignados") }}", "_blank")'>
+          Ver todos los grupos asignados (PDF)
+        </button>
+        <button class="tab-btn active" onclick="showTab('asignados3')">Asignados en grupo de a 3</button>
+        <button class="tab-btn" onclick="showTab('asignados2')">Asignados en grupo de a 2</button>
+        <button class="tab-btn" onclick="showTab('noasignados')">No asignados</button>
+        
+        <div id="asignados3" class="tab-content active">
+          {% if profesores_3 %}
+            {% for profesor in profesores_3 %}
+              <div class="prof-row">
+                <h3>{{ profesor.profesor }}</h3>
+                <a class="boton-descargar"
+                   href="{{ url_for('descargar_pdf', grupo='3', profesor=profesor.profesor) }}">
+                  Descargar horario
+                </a>
+              </div>
+              <table>
+                <tr>
+                  <th>Grupo</th>
+                  <th>Día</th>
+                  <th>Hora</th>
+                  <th>Salón</th>
+                  <th>Periodo</th>
+                  <th>Facultad</th>
+                  <th>Asignatura</th>
+                </tr>
+                {% for clase in profesor.clases %}
+                <tr>
+                  <td>{{ clase.CodigoGrupo }}</td>
+                  <td>{{ clase.Dia }}</td>
+                  <td>{{ clase.Hora }}</td>
+                  <td>{{ clase.Salon }}</td>
+                  <td>{{ clase.Periodo }}</td>
+                  <td>{{ clase.FacultadGrupo }}</td>
+                  <td>{{ clase.Asignatura }}</td>
+                </tr>
+                {% endfor %}
+              </table>
+            {% endfor %}
+          {% else %}
+            <p>No hay grupos asignados en grupo de a 3.</p>
+          {% endif %}
+        </div>
+
+        <div id="asignados2" class="tab-content">
+          {% if profesores_2 %}
+            {% for profesor in profesores_2 %}
+              <div class="prof-row">
+                <h3>{{ profesor.profesor }}</h3>
+                <a class="boton-descargar"
+                   href="{{ url_for('descargar_pdf', grupo='2', profesor=profesor.profesor) }}">
+                  Descargar horario
+                </a>
+              </div>
+              <table>
+                <tr>
+                  <th>Grupo</th>
+                  <th>Día</th>
+                  <th>Hora</th>
+                  <th>Salón</th>
+                  <th>Periodo</th>
+                  <th>Facultad</th>
+                  <th>Asignatura</th>
+                </tr>
+                {% for clase in profesor.clases %}
+                <tr>
+                  <td>{{ clase.CodigoGrupo }}</td>
+                  <td>{{ clase.Dia }}</td>
+                  <td>{{ clase.Hora }}</td>
+                  <td>{{ clase.Salon }}</td>
+                  <td>{{ clase.Periodo }}</td>
+                  <td>{{ clase.FacultadGrupo }}</td>
+                  <td>{{ clase.Asignatura }}</td>
+                </tr>
+                {% endfor %}
+              </table>
+            {% endfor %}
+          {% else %}
+            <p>No hay grupos asignados en grupo de a 2.</p>
+          {% endif %}
+        </div>
+
+        <div id="noasignados" class="tab-content">
+          {% if grupos_no_asignados %}
+            <table>
+              <tr>
+                <th>Grupo</th>
+                <th>Día</th>
+                <th>Hora</th>
+                <th>Salón</th>
+                <th>Periodo</th>
+                <th>Facultad</th>
+                <th>Asignatura</th>
+              </tr>
+              {% for grupo in grupos_no_asignados %}
+              <tr>
+                <td>{{ grupo.CodigoGrupo }}</td>
+                <td>{{ grupo.Dia }}</td>
+                <td>{{ grupo.Hora }}</td>
+                <td>{{ grupo.Salon }}</td>
+                <td>{{ grupo.Periodo }}</td>
+                <td>{{ grupo.FacultadGrupo }}</td>
+                <td>{{ grupo.Asignatura }}</td>
+              </tr>
+              {% endfor %}
+            </table>
+          {% else %}
+            <p>¡Todos los grupos fueron asignados en grupo de a 3 o de a 2!</p>
+          {% endif %}
+        </div>
+      </section>
+    {% endif %}
+  </main>
+  <script>
+    function showTab(tab) {
+      // Selecciona SÓLO los tabs por clase
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      tabBtns.forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(div => div.classList.remove('active'));
+      if(tab === 'asignados3'){
+        tabBtns[0].classList.add('active');
+        document.getElementById('asignados3').classList.add('active');
+      } else if(tab === 'asignados2'){
+        tabBtns[1].classList.add('active');
+        document.getElementById('asignados2').classList.add('active');
+      } else {
+        tabBtns[2].classList.add('active');
+        document.getElementById('noasignados').classList.add('active');
+      }
+    }
+  </script>
+</body>
+</html>
